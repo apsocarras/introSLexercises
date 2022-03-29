@@ -2,29 +2,97 @@
 title: 'ISL: Chapter 2 Notes'
 author: "Alex Socarras"
 date: "3/28/2022"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Key Takeaways
+# Interpretability vs Flexibility
+```{r figure7, echo = FALSE }
+base_dir <- "C:/Users/apsoc/Documents/R/GitProjects/introSLexercises"
 
-```{r image-ref-for-in-text}
-knitr::include_graphics("2_1.pdf")
+knitr::include_graphics(file.path(base_dir, "/figures/Chapter2/2_7.pdf"))
 
 ```
 
+# Model Accuracy 
 
-```{r cars}
-summary(cars)
+**Reducible vs Irreducible Error:** $E(Y - \hat{Y})^2 = E [f(X) + \epsilon - \hat{f}(X)]^2 = [f(X) - \hat{f}(X)]^2 + Var(\epsilon)$
+
+
+## MSE (Regression Setting)
+$MSE = \frac{1}{n}\sum_{i=1}^{n}{(y_i - \hat{f}(x_i))}^2 \text{ and }Ave(y_o - \hat{f}(x_0))^2$
+
+We want to choose the method that gives
+the lowest test MSE, as opposed to the lowest training MSE.
+if we had a large number of test observations, we could compute
+the average squared prediction error for these test observations $(x0, y0)$.
+
+## Flexibility and MSE: 
+```{r figure9, echo = FALSE }
+
+knitr::include_graphics(file.path(base_dir, "/figures/Chapter2/2_9.pdf"))
+
+knitr::include_graphics(file.path(base_dir, "/figures/Chapter2/2_10.pdf"))
+
 ```
 
-## Including Plots
+ **Always U-shaped**: $E(y_0 - \hat{f}(x_0))^2 = Var(\hat{f}(x_0)) + [Bias(\hat{f}(x_0))]^2 + Var(\epsilon)$
 
 
-```{r pressure, echo=FALSE}
+*Variance* --- the amount by which $\hat{f}$ would change if we
+estimated it using a different training data set. 
+
+*Bias* --- the error introduced from an overly-simple model.
+
+
+## Bias-Variance Tradeoff
+```{r figure12, echo = FALSE }
+
+knitr::include_graphics(file.path(base_dir, "/figures/Chapter2/2_12.pdf"))
+
+```
+*Can you guess what Fig. 11 looks like based on the rightmost chart?* 
+
+## Bayes Classifier & KNN (Classification Setting)
+
+**(training) error rate:** $\frac{1}{n}\sum_{i = 1}^{n}I(y_i \neq \hat{y}_i)$
+
+
+**Bayes Classifier:** $\text{max}_j\text{Pr}(Y = j | X = x_0)$,
+minimizes the **test error rate:** $\text{Ave}(I(y_0 \neq \hat{y_0}))$ 
+
+**Bayes error rate**: $1 - E \left(\text{max}_j\text{Pr}(Y = j|X)\right)$ 
+
+**KNN Classifier**: $\text{Pr}(Y = j|X = x_0) = \frac{1}{K}\sum_{i\in \mathcal{N}_0}I(y_i = j)$
+
+```{r figure16, echo = FALSE }
+
+knitr::include_graphics(file.path(base_dir, "/figures/Chapter2/2_16.pdf"))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Selected Exercises
+
+1a.) (*high *n, *low* p): Flexible --- A high n allows us to effectively use non-parametric methods which will achieve good accuracy with higher flexibility. A low p means that parametric methods, which are less flexible, could be more inaccurate if there are significant unknown parameters. 
+
+1b.) (*low *n, *high * p): Inflexible --- Trying to account for the effects of many different predictors on low number of observations in a flexible manner will lead to overfitting, as with only a few observations the effect of random error across the numerous predictors is more significant (i.e., flexible methods have high variance).
+
+1c.) (*highly non-linear*): Flexible --- Flexible methods will "curve" to fit the relationship more effectively. The inflexibility of methods can be measured by how closely they resemble linear regression, which by definition is inneffective here. 
+
+1d.) (*extremely high* $\sigma^2 = \text{Var}(\epsilon)$): Inflexible --- Inflexible methods are less sensitive to "noise."
+
+5.) What are the advantages and disadvantages of a very flexible (versusa less flexible) approach for regression or classification? Under what circumstances might a more flexible approach be preferred to a less flexible approach? When might a less flexible approach be preferred?
+
+6.) Describe the differences between a parametric and a non-parametric
+statistical learning approach. What are the advantages of a parametric
+approach to regression or classification (as opposed to a nonparametric
+approach)? What are its disadvantages?
+
+7.) 
+
+
+10.)
+
