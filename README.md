@@ -1,4 +1,3 @@
 # introSLexercises
-Exercises for ISL II and EdX Course
+Notes & Exercises for ISL II 
 
-Now just testing to make sure I can modify README as needed. 
