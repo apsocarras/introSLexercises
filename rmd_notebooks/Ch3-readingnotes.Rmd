@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # Simple Linear Regression
-**SLR:** $Y \approx \beta_0 + \beta_1X, \hat{y} = \hat{\beta}_0 + \hat{\beta}_1x$ 
+**SLR:** $Y \approx \beta_0 + \beta_1X, \quad \hat{y} = \hat{\beta}_0 + \hat{\beta}_1x$ 
 
 **RSS:** $\text{RSS} = \sum(y_i - \hat{y}_i)^2 \quad \text{ where }e_i = y_i - \hat{y}_i$
 
@@ -68,19 +68,29 @@ In **SLR**, $R^2 = r^2$, but *not* in **MLR** since correlation quantifies assoc
 
 **MLR:** $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1x_1 + \hat{\beta}_2x_2 + \dots + \hat{\beta}_px_p$
 
-The parameters are estimated using same *least squares approach*, calculating $\hat{\beta}_0,..., \hat{\beta}_p$ (*MLR l.s.c.e.*) to minimize RSS: 
-
-$\displaystyle \text{RSS} = \sum(y_i - \hat{y_i})^2 = \sum(y_i - \hat{\beta}_0 - \hat{\beta}_1x_{i1} - \dots - \hat{\beta}_px_{ip})^2$
+The parameters are estimated using same *least squares approach*, calculating $\hat{\beta}_0,..., \hat{\beta}_p$ (*MLR l.s.c.e.*) to **minimize RSS:** $\displaystyle \text{RSS} = \sum(y_i - \hat{y_i})^2 = \sum(y_i - \hat{\beta}_0 - \hat{\beta}_1x_{i1} - \dots - \hat{\beta}_px_{ip})^2$
 
 ```{r figure3_4}
 knitr::include_graphics("figures/Chapter3/Ch3_fig4.png")
 ```
+
+**RSE:** $\text{RSE} = \displaystyle \sqrt{\frac{1}{n - p - 1}\text{RSS}}$
 
 
 ## Interlude: Calculating MLR lsce with Matrix Algebra
 
 
 ## Resume: MLR vs SLR --- A Paradox
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_tab3.png")
+knitr::include_graphics("figures/Chapter3/Ch3_tab4.png")
+
+```
+
+```{r}
+knitr::include_graphics("figures/Chapter3/Ch3_tab5.png")
+```
 
 MLR can suggest no relationship between a predictor and the response when SLR implies the opposite! Two predictors (e.g. temperature and ice cream) in separate SLRs can individually predict a response (e.g. shark attacks), but combining them in a MLR may reveal that one (junk) predictor is simply correlated with the other (good) predictor and that the junk predictor does not actually predict the response itself.
 
@@ -97,11 +107,105 @@ MLR can suggest no relationship between a predictor and the response when SLR im
 4.) Given a set of predictor values, what response value should we predict, and how accurate is our prediction? 
 
 
+### 1.) Hypothesis Testing: is there at least one useful predictor $X_i$?
+
+$H_0 : \beta_1 = \beta_2 = \dots = \beta_p = 0$
+
+$H_a : \text{at least one }\beta_j \text{ is non-zero.}$
+
+**F-Stat:** $F = \displaystyle \frac{(\text{TSS} - \text{RSS})/p}{\text{RSS}/(n - p - 1)}, \qquad \text{ TSS} = \sum(y_i - \bar{y})^2, \quad \text{RSS} = \sum(y_i - \hat{y}_i)^2$
+
+$E\{RSS/(n-p-1)\} = \sigma^2 \quad (\textit{If the linear model assumptions are correct})$
+
+$E\{(TSS-RSS)/p\} = \sigma^2 \quad (\textit{If assumptions correct and } H_0 \textit{ is also true})$
+
+$F \approx 1 \rightarrow \text{no relationship}$
+
+**Size of F-Stat:** Given large *n*, an  *F*-statistic only slightly larger than 1 might be evidence against $H_0$. When $H_0$ true and errors $e_i$ are normally distributed, the *F*-statistic follows an *F*-distribution (with large enough *n* it approximately follows it).
+
+**F-test:** $H_0: \beta_{p-q+1} = \beta_{p-q+2} = \dots =\beta_p = 0$ (*i.e.* that a particular subset of *q* of the coefficients are zero).
+
+|    *Test model:* $\hat{y_0} = \hat{\beta}_0 +  \hat{\beta}_1x_1 + \dots + \hat{\beta}_px_p + 0(x_{p-q+1} + \dots + x_{p})$
+|
+|    *Model F-stat:* $F = \displaystyle \frac{(\text{RSS}_0 - \text{RSS})/q}{\text{RSS}/(n-p-1)} \quad$
+
+
+In Table 3.4, the *t*-statistic for each individual predictor is equivalent to the *F*-test which omits the single variable from the model and leaves the rest in ($q = 1$): $t_i^2 = F_i^2$. In other words, each of these reports the *partial effect* of adding its respective variable to the model. **Warning:**
+
+|   *High p:* even given individual *t*-statistics and p-values, **you still need overall F-statistic** --- especially when *p* is high. This is because the *F*-statistic adjusts for the number of predictors. 
+
+|   *VERY-high p:* $p > n \implies |B_{1...p}| > n \implies \textit{ least squares is impossible}$, so not even *F*-stat is good enough. Use higher-dim methods like *forward selection.*
+
+### 2.) Variable Selection
+
+As alluded to in the warning, we can't just go by individual p-values --- if *p* large, some false discoveries are likely. **Three classical approaches** exist for reducing pool of potential models down from $2^p$ (see *Ch.6*):
+
+|   *Forward selection*: Start with *null model* (only an intercept). Fit *p* SLRs and add to the null model the variable which gives lowest RSS. Add to new two-variable model the variable which gives lowest RSS. And so on till some rule is met.
+|
+|   *Backward selection*:  Start with all variables in the model, then remove the variable with the largest p-value. Then do that for the new $(p-1)$-variable model. And so on till some rule (e.g. when all remaining variables have p-value below some threshold). $\textbf{Impossible if } \ \ p > n.$
+|
+|   *Mixed selection*:  Start with forward selection and stop when the p-value for one variable rises above a given threshold. Remove that variable, then continue "forward" and "backward" until all variables inside the model have sufficiently low p-values and all variables outside would have a large p-value if added.
+
+
+### 3.) Model Fit
+
+```{r}
+knitr::include_graphics("figures/Chapter3/Ch3_fig5.png") 
+```
+Notice the *synergy* effect. 
+
+In *MLR*, $R^2 = \text{Cor}(Y, \hat{Y})^2$ --- the square of the correlation between the response and the fitted linear model. 
+
+**R^2 Always Increases with p:** $\uparrow p \implies \downarrow \text{RSS (training)} \implies \uparrow R^2 \quad \text{since } R^2 = (\text{TSS} - \text{RSS})/(\text{TSS})$ 
+
+But RSE might increase despite a decrease in RSS (if decrease in RSS is small relative to increase in *p*). (*Recall formula pg.3*)
+
+### 4.) Predictions & Uncertainty 
+ 
+**Three sorts of uncertainty** surround the use of MLR models to predict *Y* on the basis of $X_1, X_p,\dots, X_p$:
+
+|       **A.)** $\hat{Y} \text{ to } f(X)$ (Reducible error): The *least squares plane* $\hat{Y} = \hat{\beta_0} +  \hat{\beta}_1X_1 + \dots +  \hat{\beta}_pX_p$ only *estimates* the *true population regression plane* $f(X) = \beta_0 +  \beta_1X_1 + \dots +  \beta_pX_p$. *Confidence Intervals* (CIs) estimate how close $\hat{Y}$ will be to $f(X)$.
+
+|       **B.)** $f(X) \text{ to } Y$ (Irreducible error): $f(X)$ itself is only an estimate for *Y* given the irreducible error term.
+
+What about uncertainty from $\hat{Y} \text{ to } Y?$ **Prediction Intervals** estimate how much *Y* will vary from $\hat{Y}$ --- these are wider than CIs because they include both **A.)** the error in the estimate for $f(X)$ and **B.)** the uncertainty as to how much a given point will differ from pop. regression plane.
+
+|       **C.)** *Model bias* is frequently a problem in practice (most phenomena not truly linear). Ignore for now.
+
+# Other Considerations
+## Qualitative Predictors
+```{r}
+knitr::include_graphics("figures/Chapter3/3_6.pdf")
+
+```
+What do we do for the other four variables: own, student, (marital) status, and region? *Dummy-variables*.
 
 
 
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_tab8.png")
+```
 
+Here's an alternative coding scheme for a predictor with only two levels:
 
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_tab7.png")
+```
 
+## Extending the Linear Model
 
+### A.) Removing the Additive Assumption 
+
+(pg.87-91) -- Include an *interaction term*. (*ADD LATER*). 
+
+### B.) Polynomial Regression
+
+## Potential Problems
+
+1.) Non-linearity of Data
+2.) Correlation of error terms
+3.) Non-constant variance of error terms
+4.) Outliers
+5.) High-leverage points
+6.) Collinearity
 
