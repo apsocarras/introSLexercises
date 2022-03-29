@@ -6,14 +6,17 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
+# Simple Linear Regression
 **SLR:** $Y \approx \beta_0 + \beta_1X, \hat{y} = \hat{\beta}_0 + \hat{\beta}_1x$ 
 
-**RSS:** $RSS = e_1^2 + e_2^2 + \dots + e_n^2, \text{ where }e_i = y_i - \hat{y}_i$
+**RSS:** $\text{RSS} = \sum(y_i - \hat{y}_i)^2 \quad \text{ where }e_i = y_i - \hat{y}_i$
 
-**LSCE:** $\hat{\beta}_1 = \displaystyle \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n}(x_i - \bar{x})^2} \text{ and } \hat{\beta}_0 = \bar{y} - \hat{\beta}_1\bar{x}$
+The *least squares approach* chooses $\hat{\beta}_0, \hat{\beta}_1$ to minimize the RSS: 
+
+**LS Coefficent Estimates :** $\hat{\beta}_1 = \displaystyle \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n}(x_i - \bar{x})^2}, \qquad \hat{\beta}_0 = \bar{y} - \hat{\beta}_1\bar{x}$
 
 ```{r figure3_2, echo = FALSE}
 
@@ -37,7 +40,68 @@ where the *standard error* of $\hat{\mu} = SE(\hat{\mu})$ indicates the average 
 knitr::include_graphics("figures/Chapter3/3_3.pdf")
 ```
 
+We compute the standard errors of $\hat{\beta}_0, \hat{\beta}_1$:
+
 $\text{SE}(\hat{\beta}_0)^2 = \sigma^2 \displaystyle \Bigg [\frac{1}{n} + \frac{\bar{x}^2}{\sum(x_i-\bar{x})^2} \Bigg ], \quad \text{SE}(\hat{\beta}_1)^2 = \frac{\sigma^2}{\sum(x_i - \bar{x})^2} \qquad (\textbf{Assume } \epsilon_i \text{ have common } \sigma^2)$
 
-**RSE:** $\sqrt{\text{RSS}/(n-2)} \approx \sigma$ (which is typically unknown).
+**RSE:** $\sigma \approx \sqrt{\text{RSS}/(n-2)} = \displaystyle \sqrt{\frac{1}{n-2}\sum{(y_i - \hat{y}_i)^2}} \qquad ( \sigma \text{ of  pop. } \epsilon \text{ unknown}).$
+
+*"Another way to think about RSE/Stddev is that even if the model were correct and the true values of the unknown coefficients were known exactly, any prediction of sales on the basis of TV advertising would still be off by about (RSE) units on average."* RSE measures **lack of fit  in the units of** *Y*.  
+
+$R^2 = \displaystyle \frac{\text{TSS} - \text{RSS}}{\text{TSS}} = 1 - \frac{\text{RSS}}{\text{TSS}} \qquad \text{ where TSS} = \sum(y_i - \bar{y})^2$
+
+Measures the *proportion of variability in Y that can be explained using X*.
+
+TSS: *measures total variance in the response Y and can be thought of as the amount of variability inherent in the response before the regression is performed.* 
+
+RSS: *measures the amount of variability that remains unexplained after the regression.*
+
+A low $R^2$ suggests that the linear model is wrong (e.g. missing predictors), or the error variance $\sigma^2$ is high, or both.
+
+**Correlation:** $r = \text{Cor}(X,Y) = \displaystyle \frac{\sum(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum(x_i - \bar{x})^2}\sqrt{\sum(y_i - \bar{y})^2}}$
+ 
+In **SLR**, $R^2 = r^2$, but *not* in **MLR** since correlation quantifies association between a single pair of variables. 
+
+# Multiple Linear Regression
+
+*population regression line:* $Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_pX_p + \epsilon \qquad (\text{where } \beta_j = \text{avg. affect of unit incr. in X } c.p.)$. 
+
+**MLR:** $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1x_1 + \hat{\beta}_2x_2 + \dots + \hat{\beta}_px_p$
+
+The parameters are estimated using same *least squares approach*, calculating $\hat{\beta}_0,..., \hat{\beta}_p$ (*MLR l.s.c.e.*) to minimize RSS: 
+
+$\displaystyle \text{RSS} = \sum(y_i - \hat{y_i})^2 = \sum(y_i - \hat{\beta}_0 - \hat{\beta}_1x_{i1} - \dots - \hat{\beta}_px_{ip})^2$
+
+```{r figure3_4}
+knitr::include_graphics("figures/Chapter3/Ch3_fig4.png")
+```
+
+
+## Interlude: Calculating MLR lsce with Matrix Algebra
+
+
+## Resume: MLR vs SLR --- A Paradox
+
+MLR can suggest no relationship between a predictor and the response when SLR implies the opposite! Two predictors (e.g. temperature and ice cream) in separate SLRs can individually predict a response (e.g. shark attacks), but combining them in a MLR may reveal that one (junk) predictor is simply correlated with the other (good) predictor and that the junk predictor does not actually predict the response itself.
+
+
+## Four Questions for MLR
+
+1.) Is at least one of the predictors $X_1, X_2, ...,X_p$ useful in predicting *Y*?    
+(*use hypothesis test, F-stat if not high-dim*)
+
+2.) Do all the predictors help explain *Y* or just some?
+
+3.) How well does the model fit the data?
+
+4.) Given a set of predictor values, what response value should we predict, and how accurate is our prediction? 
+
+
+
+
+
+
+
+
+
 
