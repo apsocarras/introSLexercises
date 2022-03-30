@@ -79,6 +79,8 @@ knitr::include_graphics("figures/Chapter3/Ch3_fig4.png")
 
 ## Interlude: Calculating MLR lsce with Matrix Algebra
 
+(ADD LATER)
+
 
 ## Resume: MLR vs SLR --- A Paradox
 
@@ -194,18 +196,124 @@ knitr::include_graphics("figures/Chapter3/ch3_tab7.png")
 
 ## Extending the Linear Model
 
-### A.) Removing the Additive Assumption 
+### A.) Relaxing the Additive Assumption (Interaction)
 
-(pg.87-91) -- Include an *interaction term*. (*ADD LATER*). 
+Including an *interaction term* can account for the synergy/interaction of two predictors $X_1, X_2$: 
 
-### B.) Polynomial Regression
+$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 + \epsilon \quad = \quad \beta_0 + (\beta_1 + \beta_3X_2)X_1 + \beta_2X_2 + \epsilon \quad = \quad \beta_0 + \beta_1X_1 + (\beta_2 + \beta_3X_1)X_2 + \epsilon$ 
 
-## Potential Problems
+|   $\hat{\beta_1} = (\beta_1 + \beta_3X_2), \quad\hat{\beta}_2 = (\beta_2 + \beta_3X_1)$
+|   $\implies$ associations between $X_1, Y$ and $X_2, Y$ no longer constant.
 
-1.) Non-linearity of Data
-2.) Correlation of error terms
-3.) Non-constant variance of error terms
-4.) Outliers
-5.) High-leverage points
-6.) Collinearity
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_tab9.png")
+```
 
+*Hierarchical principle:* When including an *interaction term* in a model, always include the *main effects* too, even if the p-values of their coefficients aren't significant. 
+
+**Qualitative-Quantitative Interaction:**
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig7.png")
+
+```
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_eq335.png")
+```
+
+
+
+### B.) Polynomial Regression 
+(ADD LATER)
+
+## Potential Problems with Linear Regression
+
+### 1.) Non-linearity of Data (use  *non-linear transformations* of the predictors)
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig9.png")
+```
+
+### 2.) Correlation of error terms (Tracking)
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig10.png")
+```
+
+If there is correlation among the error terms, the estimated standard errors will tend to underestimate the true standard errors. This causes CIs and PIs to be narrower and p-values to be lower than they should be.
+
+### 3.) Non-constant variance of error terms (Heteroscedasticity)
+
+```{r}
+knitr::include_graphics("figures/Chapter3/3_11.pdf")
+```
+
+Another method for addressing heteroscedasticity for when we have good information about the variance of each response is called *weighted least squares*, where we fit weights proportional to the inverse variances ([link](https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd143.htm#:~:text=If%20the%20standard%20deviation%20of,most%20precise%20parameter%20estimates%20possible.)).
+
+
+### 4.) Outliers (unusual response value)
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig12.png")
+
+```
+
+Outliers without unusual predictor values often have little effect on least squares fit (see Left). But it can stil cause other problems, e.g.: 
+
+|   $\uparrow \text{RSE} \rightarrow \ ?\text{CIs, } ?p\text{-values}, \qquad \downarrow R^2$ 
+
+**Studentized residual:** Divide each $e_i$ by its estimated standard error.
+
+### 5.) High-leverage points (unusual predictor value)
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig13.png")
+
+```
+
+An observation with an unusual predictor value is called a *high-leverage point* because of its strong effect on the regression line. 
+
+**Leverage statistic (SLR)**: $\displaystyle h_i = \frac{1}{n} + \frac{(x_i - \bar{x})^2}{\sum_{j=1}^n(x_{j} - \bar{x})^2}$ 
+
+### 6.) Collinearity 
+
+
+$\rightarrow \ \uparrow \text{SE}(\hat{\beta}_j) \ \rightarrow \ \downarrow t\text{-stat} \ \rightarrow \ \downarrow \text{power}$
+
+Detect with *correlation matrix* and *variance inflation factor* (VIF).
+
+**VIF**: $\text{VIF}(\hat{\beta}_j) = \displaystyle \frac{1}{1-R^2_{X_j|X_{-j}}} \qquad \text{(where } R^2_{X_j|X_{-j}} \text{ is } R^2 \text{ from regression of } X_j \text{ onto rest of predictors})$
+
+*Two Solutions*: **a.)** Drop one of the problematic variables **b.)** Combine them into a single predictor
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig14.png")
+
+```
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig15.png")
+
+```
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_tab11.png")
+
+```
+
+# LR vs. KNN Regression
+
+$\uparrow K \  \rightarrow \ \downarrow \sigma^2, \uparrow \text{bias} \qquad \qquad \downarrow K \  \rightarrow \ \uparrow \sigma^2, \downarrow \text{bias}$
+
+A *parametric method* like LR is easy to fit (estimate only a few coefficients), easier to interpret, and makes statistical significance tests easier. But they make strong assumptions about the form of $f(X)$. 
+
+*Non-parametric methods* like *KNN regression* make no such assumption and are thus more flexible.
+
+**KNN regression**: $\hat{f}(x_0) = \displaystyle \frac{1}{K}\sum_{x_i \in \mathcal{N}_0}y_i$
+
+KNN can perform better when true relationship is non-linear, *K* is high, and *p* is small (low dimensions). Even then, LR might be preferable since it's more readily interpretable.  
+
+```{r}
+knitr::include_graphics("figures/Chapter3/ch3_fig16.png")
+
+```
