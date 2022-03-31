@@ -31,21 +31,6 @@ library(ISLR2)
 ```
 
 
-If you receive an error message when loading any of these libraries, it
-likely indicates that the corresponding library has not yet been
-installed on your system. Some libraries, such as `MASS`, come with `R`
-and do not need to be separately installed on your computer. However,
-other packages, such as `ISLR2`, must be downloaded the first time they
-are used. This can be done directly from within `R`. For example, on a
-Windows system,  select the `Install package` option
-under the `Packages` tab.  After you select any mirror site, a
-list of available packages will appear. Simply select the package you
-wish to install and `R` will automatically download the
-package. Alternatively, this can be done at the `R` command line
-via `install.packages("ISLR2")`. This installation only needs
-to be done the first time you use a package. However, the
-`library()` function must be called within each `R` session.
-
 ## Simple Linear Regression
 
 The `ISLR2` library contains the `Boston`  data set, which
@@ -343,4 +328,32 @@ If we call the function, the libraries are loaded in and the print statement is 
 LoadLibraries()
 ```
 
+# Applied Exercises 
+
+
+```{r ex8}
+library(ISLR2)
+
+
+attach(Auto)
+
+
+#a
+lm_fit = lm(mpg ~ horsepower)
+
+summary(lm_fit) # strong negative relationship: peep p-vals and F-stat. R^2 -- ~60% of variance in mpg is explained by horsepower. 
+predict(lm_fit, data.frame(horsepower = c(98)), interval = "confidence")
+predict(lm_fit, data.frame(horsepower = c(98)), interval = "prediction")
+
+plot(horsepower, mpg)
+abline(lm_fit)
+
+plot(lm_fit)
+```
+
+
+```{r ex10}
+
+lm(mpg)
+```
 

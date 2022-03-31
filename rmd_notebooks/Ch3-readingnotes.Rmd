@@ -196,8 +196,6 @@ knitr::include_graphics("figures/Chapter3/ch3_tab7.png")
 
 ## Extending the Linear Model
 
-### A.) Relaxing the Additive Assumption (Interaction)
-
 Including an *interaction term* can account for the synergy/interaction of two predictors $X_1, X_2$: 
 
 $Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 + \epsilon \quad = \quad \beta_0 + (\beta_1 + \beta_3X_2)X_1 + \beta_2X_2 + \epsilon \quad = \quad \beta_0 + \beta_1X_1 + (\beta_2 + \beta_3X_1)X_2 + \epsilon$ 
@@ -301,7 +299,7 @@ knitr::include_graphics("figures/Chapter3/ch3_tab11.png")
 
 ```
 
-# LR vs. KNN Regression
+## LR vs. KNN Regression
 
 $\uparrow K \  \rightarrow \ \downarrow \sigma^2, \uparrow \text{bias} \qquad \qquad \downarrow K \  \rightarrow \ \uparrow \sigma^2, \downarrow \text{bias}$
 
@@ -317,3 +315,30 @@ KNN can perform better when true relationship is non-linear, *K* is high, and *p
 knitr::include_graphics("figures/Chapter3/ch3_fig16.png")
 
 ```
+
+# Exercises (Conceptual)
+
+1.) Null hypotheses: that the true TV/radio/newspaper coefficient (effect on sales) is zero after controlling for the other predictors. We fail to reject the hypothesis that newspaper ad spending has no significant effect on sales. 
+
+2.) The KNN classifier is used when the output is a qualitative variable and generates a "boundary/probability threshold" to serve as a guide for predicting which class an observation falls into. Whereas KNN deals with quantitative predictors and output. 
+
+3.) Model: $\hat{Y} = 50 + 20(GPA) + .07(IQ) + 35(Level) + .01(GPA \times IQ) - 10(GPA \times Level)$
+
+a.) The correct answer is *ii*. *i* and *iii* are obviously false given the coding (0/1 for High school/College) and the positive coefficient. *iv* is false because you could fix the GPA at 0 and college graduates would still earn more on average. 
+
+(b) 50 + 20(4.0) + .07(110) + 35(1) + .01(440) - 40 = 137,100 (seems absurdly high).
+
+(c) **False**: we'd need to conduct hypothesis tests to determine whether we have evidence of an interaction effect. One cannot assume just based on "eyeballing" the size of the coefficient.
+
+4.) **Linear vs Polynomial RSS** ([link](https://stats.stackexchange.com/questions/241634/comparing-rss-from-linear-and-higher-power-models-in-a-training-and-test-data)) 
+
+a.) With training data, polynomial regression will generally have lower RSS than linear regardless of whether the true relationship is linear, due to overfitting.
+
+b.) With test data we'd expect the linear RSS to be lower
+
+c.) Again, polynomial regression is more flexible so we'd expect its RSS to be lower in the test data, more-so when the relationship isn't linear. 
+
+d.) *More information needed* -- the true relationship could be closer to linear than cubic, or closer to cubic than linear. This is the *bias-variance tradeoff* in a nutshell. 
+
+
+6.) Use Eq. (3.2), (3.4): $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1x$ and $\beta_0 = \bar{y} - \hat{\beta}\bar{x}$. Substitute and substract $\hat{y}$ from both sides. Hence, in SLR, the least squares line always passes through $(\bar{x}, \bar{y})$.
